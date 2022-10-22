@@ -2,13 +2,13 @@
 
 - create account on github.com & login into github.com
 
-- fork a copy of info-ruc/ai20projects
+- fork a copy of info-ruc/middle22projects
 
 - download and install git tool on your local computer
 
 - git config --global user.name "$yourname$" & git config --global user.email "$yourname@yourserver.com$" 
 
-- git clone https://github.com/$yourname$/ai20projects.git
+- git clone https://github.com/$yourname$/middle22projects.git
 
 - make folders structures following Report Naming Convention in README.md
 
@@ -20,4 +20,4 @@
 
 - git push
 
-- create a pull request on github.com to merge your commit with info-ruc/ai20projects
+- create a pull request on github.com to merge your commit with info-ruc/middle22projects
