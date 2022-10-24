@@ -1,4 +1,4 @@
-package edu.ruc.liu.elkdemo;
+package edu.ruc.liu;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
