@@ -1,39 +1,54 @@
 package edu.ruc.liu.importData;
 
 import edu.ruc.liu.dto.SubtitleEntity;
+import edu.ruc.liu.service.ISubtitleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.*;
 import java.util.ArrayList;
 
 @Service
 @Slf4j
 public class ImportServiceImp implements IImportService{
-
+    @Resource
+    ISubtitleRepository subtitleRepository;
 
     @Override
     public void importIn(MultipartFile file){
 
 
     }
+    @Override
+    public void process(String fileName) {
 
-    public static void main(String[] args) {
         try {
-            BufferedReader in = new BufferedReader(new FileReader("/Users/tal/Documents/GitHub/middle22projects/2021104413/src/dataset/Better Call Saul S01E04 Hero 720p BluRay DTS x264-EbP.简体&英文.srt"));
+            BufferedReader in = new BufferedReader(new FileReader(fileName));
             String str;
-            ArrayList<SubtitleEntity> subtitleEntitieList = new ArrayList<>();
+            ArrayList<SubtitleEntity> subtitleEntityList = new ArrayList<>();
+            SubtitleEntity subtitleEntity = new SubtitleEntity();
+            int line=0;
             while ((str = in.readLine()) != null) {
-                if (subtitleEntitieList.size()>=100){
-                    subtitleEntitieList = new ArrayList<>();
+                if (subtitleEntityList.size()>=100){
+                    //do
+                    subtitleRepository.saveBatch(subtitleEntityList);
+                    //clear
+                    subtitleEntityList.clear();
+                }
+
+
+
+                if (str =="/n"){
+                    subtitleEntity=new SubtitleEntity();
+                    line=0;
                 }
 
 
 
 
-
-                System.out.println(str);
+                subtitleEntityList.add(subtitleEntity);
 
             }
             System.out.println(str);

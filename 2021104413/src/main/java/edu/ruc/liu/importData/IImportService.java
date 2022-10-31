@@ -4,4 +4,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface IImportService {
     void importIn(MultipartFile file);
+
+    void process(String fileName);
 }
