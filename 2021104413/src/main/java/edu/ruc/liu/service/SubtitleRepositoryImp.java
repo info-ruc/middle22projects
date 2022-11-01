@@ -4,12 +4,14 @@ import edu.ruc.liu.dto.SubtitleEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Slf4j
 @Repository
+@Component
 public class SubtitleRepositoryImp implements ISubtitleRepository{
     @Autowired
     private ElasticsearchRestTemplate template;
@@ -18,5 +20,7 @@ public class SubtitleRepositoryImp implements ISubtitleRepository{
     @Override
     public void saveBatch(List<SubtitleEntity> subtitleEntities) {
         template.save(subtitleEntities);
+//        subtitleEntities.forEach(System.out::println);
+        log.info("done");
     }
 }
