@@ -8,8 +8,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -35,9 +37,18 @@ class ApplicationTests {
 
     @Test
     void process(){
-        importServiceImp.process("/Users/tal/Documents/GitHub/middle22projects/2021104413/src/dataset/Better Call Saul S01E10 Marco 720p BluRay DTS x264-EbP.简体&英文.srt");
 
+        String path ="/Users/tal/Documents/GitHub/middle22projects/2021104413/src/dataset/Season2";
+        String[] fileList = new File(path).list();
+        for (String s : fileList) {
+            importServiceImp.process(path+"/"+s);
+        }
 
+    }
+
+    public static void main(String[] args) {
+        String[] list = new File("/Users/tal/Documents/GitHub/middle22projects/2021104413/src/dataset").list();
+        Arrays.stream(list).forEach(System.out::println);
     }
 
 }
