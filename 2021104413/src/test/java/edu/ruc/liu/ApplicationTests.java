@@ -38,9 +38,14 @@ class ApplicationTests {
     @Test
     void process(){
 
-        String path ="/Users/tal/Documents/GitHub/middle22projects/2021104413/src/dataset/Season2";
+        String path ="/Users/tal/Documents/GitHub/middle22projects/2021104413/src/dataset/Season1";
         String[] fileList = new File(path).list();
         for (String s : fileList) {
+            importServiceImp.process(path+"/"+s);
+        }
+        String path2 ="/Users/tal/Documents/GitHub/middle22projects/2021104413/src/dataset/Season2";
+        String[] fileList2 = new File(path2).list();
+        for (String s : fileList2) {
             importServiceImp.process(path+"/"+s);
         }
 

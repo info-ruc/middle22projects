@@ -1,5 +1,6 @@
 package edu.ruc.liu.dto;
 
+import co.elastic.clients.elasticsearch._types.analysis.StandardAnalyzer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
