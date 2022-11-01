@@ -43,7 +43,7 @@ public class ImportServiceImp implements IImportService{
             SubtitleEntity subtitleEntity = new SubtitleEntity(season,episode);
             int line=0;
             while ((str = in.readLine()) != null) {
-                if (subtitleEntityList.size()>=100){
+                if (subtitleEntityList.size()>=50){
                     //do
                     subtitleRepositoryImp.saveBatch(subtitleEntityList);
                     //clear

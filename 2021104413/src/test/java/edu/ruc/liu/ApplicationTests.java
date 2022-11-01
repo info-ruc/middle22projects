@@ -35,7 +35,7 @@ class ApplicationTests {
 
     @Test
     void process(){
-        importServiceImp.process("/Users/tal/Documents/GitHub/middle22projects/2021104413/src/dataset/Better Call Saul S01E04 Hero 720p BluRay DTS x264-EbP.简体&英文.srt");
+        importServiceImp.process("/Users/tal/Documents/GitHub/middle22projects/2021104413/src/dataset/Better Call Saul S01E10 Marco 720p BluRay DTS x264-EbP.简体&英文.srt");
 
 
     }
