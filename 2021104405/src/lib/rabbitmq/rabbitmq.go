@@ -49,8 +49,7 @@ func (q *RabbitMQ) Bind(exchange string){
 		"",//routing key
 		exchange,//name of exchange
 		false,//whether wait for server ensure
-		nil//arguments
-	)
+		nil)//arguments
 	if e!=nil{
 		panic(e)
 	}
@@ -71,8 +70,7 @@ func (q *RabbitMQ) Send(queue string,body interface{}){
 		amqp.Publishing{//msg body
 			ReplyTo:q.Name,
 			Body:[]byte(str),
-		}
-	)
+		})
 	if e!=nil{
 		panic(e)
 	}
@@ -91,9 +89,8 @@ func (q *RabbitMQ) Publish(exchange string,body interface{}){
 		false,
 		amqp.Publishing{
 			ReplyTo:q.Name,
-			Body:[]byte(str)
-		}
-	)
+			Body:[]byte(str),
+		})
 	if e!=nil{
 		panic(e)
 	}

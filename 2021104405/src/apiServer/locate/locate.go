@@ -1,7 +1,7 @@
 package locate
 
 import (
-	"lib/rabbitmq"
+	"../../lib/rabbitmq"
 	"os"
 	"strconv"
 	"time"
