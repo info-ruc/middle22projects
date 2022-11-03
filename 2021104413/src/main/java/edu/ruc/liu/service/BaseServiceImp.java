@@ -5,14 +5,30 @@ import edu.ruc.liu.util.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.List;
+
 @Service
 @Slf4j
 public class BaseServiceImp implements IBaseService{
 
+    @Resource
+    ISubtitleRepository subtitleRepository;
+
     @Override
-    public SubtitleEntity search(String word) {
+    public List<SubtitleEntity> search(String word) {
         if (Util.containChinese(word)){
+            List<SubtitleEntity> subtitleEntityList = subtitleRepository.searchChineseSub(word);
+            return subtitleEntityList;
         }
+        return null;
+    }
+
+    @Override
+    public List<SubtitleEntity> searchByTimeLine(Long time, String episode, String season) {
+        List<SubtitleEntity> subtitleEntityList =subtitleRepository.searchByTimeLine(time,episode,season);
+
+
         return null;
     }
 }

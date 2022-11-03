@@ -1,6 +1,7 @@
 package edu.ruc.liu;
 
 import edu.ruc.liu.importData.IImportService;
+import edu.ruc.liu.service.ISubtitleRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,19 @@ class ApplicationTests {
 
     @Resource
     IImportService importServiceImp;
+
+    @Resource
+    ISubtitleRepository subtitleRepository;
+
+    @Test
+    void search(){
+
+
+        subtitleRepository.searchChineseSub("吉米");
+    }
+
+
+
 
     @Test
     void contextLoads() {

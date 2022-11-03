@@ -8,4 +8,7 @@ public interface ISubtitleRepository {
 
     void saveBatch(List<SubtitleEntity> subtitleEntities);
 
+    List<SubtitleEntity> searchChineseSub(String word);
+
+    List<SubtitleEntity> searchByTimeLine(Long time, String episode, String season);
 }

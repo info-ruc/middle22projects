@@ -1,6 +1,5 @@
 package edu.ruc.liu.dto;
 
-import co.elastic.clients.elasticsearch._types.analysis.StandardAnalyzer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -8,7 +7,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-@Document(indexName = "better_call_saul")
+@Document(indexName = "better_call_saul_word")
 @Data
 @NoArgsConstructor
 public class SubtitleEntity {
