@@ -17,11 +17,15 @@ public class BaseServiceImp implements IBaseService{
 
     @Override
     public List<SubtitleEntity> search(String word) {
+        List<SubtitleEntity> subtitleEntityList;
+
         if (Util.containChinese(word)){
-            List<SubtitleEntity> subtitleEntityList = subtitleRepository.searchChineseSub(word);
+            subtitleEntityList = subtitleRepository.searchChineseSub(word);
             return subtitleEntityList;
+        }else {
+            subtitleEntityList = subtitleRepository.searchEnglishSub(word);
         }
-        return null;
+        return subtitleEntityList;
     }
 
     @Override
@@ -29,6 +33,6 @@ public class BaseServiceImp implements IBaseService{
         List<SubtitleEntity> subtitleEntityList =subtitleRepository.searchByTimeLine(time,episode,season);
 
 
-        return null;
+        return subtitleEntityList;
     }
 }

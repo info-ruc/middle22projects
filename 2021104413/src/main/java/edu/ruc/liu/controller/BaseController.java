@@ -27,9 +27,8 @@ public class BaseController {
     @PostMapping("/import")
     public Response importData(MultipartFile file){
 
-
         importService.importIn(file);
-        return null;
+        return Response.success(null);
 
     }
 

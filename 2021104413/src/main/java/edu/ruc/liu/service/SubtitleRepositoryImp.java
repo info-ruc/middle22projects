@@ -47,16 +47,27 @@ public class SubtitleRepositoryImp implements ISubtitleRepository{
                 .withQuery(QueryBuilders.boolQuery()
                         .must(QueryBuilders.matchPhraseQuery("episode", episode))
                         .must(QueryBuilders.matchPhraseQuery("season", season))
-                )
-//                .withAggregations(AggregationContainer)
+                        .must(QueryBuilders.rangeQuery("startTime").lte(time))
+                        .must(QueryBuilders.rangeQuery("endTime").gte(time))
+                ).build();
+        SearchHits<SubtitleEntity> searchHits =  template.search(
+                nativeSearchQuery, SubtitleEntity.class);
+        List<SubtitleEntity> SubtitleEntityList = searchHits.getSearchHits().stream().map(SearchHit::getContent).collect(Collectors.toList());
 
 
+
+        return SubtitleEntityList;
+    }
+
+    @Override
+    public List<SubtitleEntity> searchEnglishSub(String word) {
+        NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.matchQuery("english", word))
                 .build();
         SearchHits<SubtitleEntity> searchHits =  template.search(
                 nativeSearchQuery, SubtitleEntity.class);
+        List<SubtitleEntity> SubtitleEntityList = searchHits.getSearchHits().stream().map(SearchHit::getContent).collect(Collectors.toList());
+        return SubtitleEntityList;
 
-
-
-        return null;
     }
 }

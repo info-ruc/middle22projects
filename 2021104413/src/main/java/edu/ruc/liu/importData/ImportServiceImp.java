@@ -20,7 +20,57 @@ public class ImportServiceImp implements IImportService{
 
     @Override
     public void importIn(MultipartFile file){
+        String fileName = file.getName();
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(file.getInputStream()));
+            String season = fileName.substring(fileName.indexOf("S0"),fileName.indexOf("S0")+3);
+            String episode = fileName.substring(fileName.indexOf("S0")+3,fileName.indexOf("S0")+6);
+            String str;
+            ArrayList<SubtitleEntity> subtitleEntityList = new ArrayList<>();
+            SubtitleEntity subtitleEntity = new SubtitleEntity(season,episode);
+            int line=0;
+            while ((str = in.readLine()) != null) {
+                if (subtitleEntityList.size()>=50){
+                    //do
+                    subtitleRepositoryImp.saveBatch(subtitleEntityList);
+                    //clear
+                    subtitleEntityList.clear();
+                }
 
+                if (str.equals("")){
+                    subtitleEntityList.add(subtitleEntity);
+                    subtitleEntity = new SubtitleEntity(season,episode);
+                    line=0;
+                    continue;
+                }
+
+                switch (line){
+                    case 0:
+                        subtitleEntity.setId(season+"-"+episode+"-"+str);
+                        break;
+                    case 1:
+                        subtitleEntity.setStartTime(getStartTime(str));
+                        subtitleEntity.setEndTime(getEndTime(str));
+                        break;
+                    case 2:
+                        subtitleEntity.setChineseSub(getChineseSub(str));
+                        break;
+                    case 3:
+                        if (Util.containChinese(str)){
+                            subtitleEntity.setChineseSub(subtitleEntity.getChineseSub()+str);
+                            break;
+                        }
+                        subtitleEntity.setEnglishSub(str);
+                        break;
+                }
+                line++;
+
+//                subtitleEntityList.add(subtitleEntity);
+            }
+            subtitleRepositoryImp.saveBatch(subtitleEntityList);
+
+        } catch (IOException e) {
+        }
 
     }
 

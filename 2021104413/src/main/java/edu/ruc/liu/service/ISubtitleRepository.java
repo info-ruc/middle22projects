@@ -11,4 +11,6 @@ public interface ISubtitleRepository {
     List<SubtitleEntity> searchChineseSub(String word);
 
     List<SubtitleEntity> searchByTimeLine(Long time, String episode, String season);
+
+    List<SubtitleEntity> searchEnglishSub(String word);
 }
