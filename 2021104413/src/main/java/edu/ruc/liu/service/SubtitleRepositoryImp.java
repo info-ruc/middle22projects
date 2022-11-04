@@ -4,7 +4,6 @@ import edu.ruc.liu.dto.SubtitleEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.AggregationContainer;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
@@ -62,7 +61,7 @@ public class SubtitleRepositoryImp implements ISubtitleRepository{
     @Override
     public List<SubtitleEntity> searchEnglishSub(String word) {
         NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.matchQuery("english", word))
+                .withQuery(QueryBuilders.matchQuery("englishSub", word))
                 .build();
         SearchHits<SubtitleEntity> searchHits =  template.search(
                 nativeSearchQuery, SubtitleEntity.class);
