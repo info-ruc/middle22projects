@@ -8,7 +8,7 @@ import(
 
 func Locate(name string) bool{
 	_,err:=os.Stat(name)//os.Stat get status of target file
-	return os.IsNotExist(err)//是否已知错误以报告文件或目录不存在
+	return !os.IsNotExist(err)//是否已知错误以报告文件或目录不存在
 }
 
 func StartLocate(){

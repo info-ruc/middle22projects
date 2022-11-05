@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"os"
 	"strings"
-	"log"
 )
 
 type MetaData struct{
@@ -84,9 +83,7 @@ func PutMetaData(name string,version int,size int64,hash string) error{
 	request,_:=http.NewRequest("PUT",url,strings.NewReader(doc))
 	request.Header.Add("Content-Type","application/json")
 	response,e:=client.Do(request)
-	log.Println(url,response.StatusCode)
 	if e!=nil{
-		log.Println(e)
 		return e
 	}
 	if response.StatusCode==http.StatusConflict{
@@ -113,7 +110,6 @@ func SearchAllVersions(name string,from,size int) ([]MetaData,error){
 	if name!=""{
 		url+="&q=name:"+name
 	}
-	log.Println(url)
 	request,_:=http.NewRequest("GET",url,nil)
 	request.Header.Add("Content-Type","application/json")
 	response,e:=client.Do(request)
@@ -124,7 +120,6 @@ func SearchAllVersions(name string,from,size int) ([]MetaData,error){
 	result,_:=ioutil.ReadAll(response.Body)
 	var sr searchResult
 	json.Unmarshal(result,&sr)
-	log.Println(len(sr.Hits.Hits))
 	for i:=range sr.Hits.Hits{
 		metas=append(metas,sr.Hits.Hits[i].Source)
 	}

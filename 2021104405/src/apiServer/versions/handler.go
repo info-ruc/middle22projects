@@ -17,7 +17,6 @@ func Handler(w http.ResponseWriter,r *http.Request){
 	from:=0
 	size:=1000
 	name:=strings.Split(r.URL.EscapedPath(),"/")[2]
-	log.Println(name)
 	//page from from with size of size
 	for {
 		metas,e:=es.SearchAllVersions(name,from,size)//metas:objects array of all versions

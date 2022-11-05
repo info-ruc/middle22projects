@@ -48,7 +48,7 @@ func get(w http.ResponseWriter,r *http.Request){
 
 func getStream(object string)(io.Reader,error){
 	server:=locate.Locate(object)//locate the address of server which store the object
-	if server!="" {
+	if server=="" {
 		return nil,fmt.Errorf("object %s locate fail",object)
 	}
 	return objectstream.NewGetStream(server,object)
