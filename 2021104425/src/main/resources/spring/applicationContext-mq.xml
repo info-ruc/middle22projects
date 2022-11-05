@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+        http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+    <!--连接工厂-->
+    <rabbit:connection-factory id="rabbitConnectionFactory"
+                               username="${rabbit.username}" password="${rabbit.password}" host="${rabbit.host}"
+                               port="${rabbit.port}" channel-cache-size="50" publisher-confirms="true"/>
+
+    <!-- 定义admin,producer中的exchange,queue会自动的利用该admin自动在spring中生成 -->
+    <rabbit:admin connection-factory="rabbitConnectionFactory"/>
+
+
+    <!-- 定义rabbitmq模板，指定连接工厂、exchange、queue等 -->
+    <rabbit:template id="amqpTemplate" connection-factory="rabbitConnectionFactory"/>
+
+
+    <!-- 队列声明 :
+         durable：true、false true：在服务器重启时，能够存活
+         exclusive ：当连接关闭后是否自动删除队列；是否私有队列，如果私有，其他通道不能访问当前队列
+         autodelete：当没有任何消费者使用时，自动删除该队列 -->
+    <rabbit:queue name="addQueue" durable="true" auto-delete="false" exclusive="false"/>
+
+    <!-- 定义direct exchange，交换机 绑定addQueue-->
+    <rabbit:direct-exchange name="addExchange" durable="true" auto-delete="false">
+        <rabbit:bindings>
+            <rabbit:binding queue="addQueue" key="addQueueKey"></rabbit:binding>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+
+    <!-- 消息接收者-->
+    <bean id="messageReceiver" class="org.imooc.mq.MessageConsumer"></bean>
+
+    <!-- queue litener -->
+    <rabbit:listener-container connection-factory="rabbitConnectionFactory" >
+        <rabbit:listener queues="addQueue" ref="messageReceiver"/>
+    </rabbit:listener-container>
+</beans>
