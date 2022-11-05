@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"log"
 )
 
 type MetaData struct{
@@ -30,8 +31,11 @@ type searchResult struct{
 }
 
 func getMetaData(name string,versionId int) (meta MetaData,e error){
-	url:=fmt.Sprintf("http://%s/metadata/objects/%s_%d/_source",os.Getenv("ES_SERVER"),name,versionId)
-	response,e:=http.Get(url)
+	client:=http.Client{}
+	url:=fmt.Sprintf("http://%s/metadata/_doc/%s_%d/_source",os.Getenv("ES_SERVER"),name,versionId)
+	request,_:=http.NewRequest("GET",url,nil)
+	request.Header.Add("Content-Type","application/json")
+	response,e:=client.Do(request)
 	if e != nil {
 		return
 	}
@@ -45,8 +49,11 @@ func getMetaData(name string,versionId int) (meta MetaData,e error){
 }
 
 func SearchLatestVersion(name string) (meta MetaData,e error){
+	client:=http.Client{}
 	url:=fmt.Sprintf("http://%s/metadata/_search?q=name:%s&size=1&sort=version:desc",os.Getenv("ES_SERVER"), url.PathEscape(name))
-	response,e:=http.Get(url)
+	request,_:=http.NewRequest("GET",url,nil)
+	request.Header.Add("Content-Type","application/json")
+	response,e:=client.Do(request)
 	if e != nil {
 		return
 	}
@@ -73,10 +80,13 @@ func GetMetaData(name string,version int) (MetaData,error){
 func PutMetaData(name string,version int,size int64,hash string) error{
 	doc:=fmt.Sprintf(`{"name":"%s","version":%d,"size":%d,"hash":"%s"}`,name,version,size,hash)
 	client:=http.Client{}
-	url:=fmt.Sprintf("http://%s/metadata/objects/%s_%d?op_type=create",os.Getenv("ES_SERVER"),name,version)
+	url:=fmt.Sprintf("http://%s/metadata/_doc/%s_%d?op_type=create",os.Getenv("ES_SERVER"),name,version)
 	request,_:=http.NewRequest("PUT",url,strings.NewReader(doc))
+	request.Header.Add("Content-Type","application/json")
 	response,e:=client.Do(request)
+	log.Println(url,response.StatusCode)
 	if e!=nil{
+		log.Println(e)
 		return e
 	}
 	if response.StatusCode==http.StatusConflict{
@@ -98,11 +108,15 @@ func AddVersion(name,hash string,size int64) error{
 }
 
 func SearchAllVersions(name string,from,size int) ([]MetaData,error){
-	url:=fmt.Sprintf("http://%s/metadata/_search?sort=name,version&from=%d&size=%d",os.Getenv("ES_SERVER"),from,size)
+	client:=http.Client{}
+	url:=fmt.Sprintf("http://%s/metadata/_search?from=%d&size=%d",os.Getenv("ES_SERVER"),from,size)
 	if name!=""{
 		url+="&q=name:"+name
 	}
-	response,e:=http.Get(url)
+	log.Println(url)
+	request,_:=http.NewRequest("GET",url,nil)
+	request.Header.Add("Content-Type","application/json")
+	response,e:=client.Do(request)
 	if e!=nil{
 		return nil,e
 	}
@@ -110,6 +124,7 @@ func SearchAllVersions(name string,from,size int) ([]MetaData,error){
 	result,_:=ioutil.ReadAll(response.Body)
 	var sr searchResult
 	json.Unmarshal(result,&sr)
+	log.Println(len(sr.Hits.Hits))
 	for i:=range sr.Hits.Hits{
 		metas=append(metas,sr.Hits.Hits[i].Source)
 	}
@@ -118,8 +133,9 @@ func SearchAllVersions(name string,from,size int) ([]MetaData,error){
 
 func DelMetaData(name string,version int){
 	client:=http.Client{}
-	url:=fmt.Sprintf("http://%s/metadata/objects/%s_%d",os.Getenv("ES_SERVER"),name,version)
+	url:=fmt.Sprintf("http://%s/metadata/_doc/%s_%d",os.Getenv("ES_SERVER"),name,version)
 	request,_:=http.NewRequest("DELETE",url,nil)
+	request.Header.Add("Content-Type","application/json")
 	client.Do(request)
 }
 
@@ -163,6 +179,7 @@ func SearchVersionStatus(min_doc_count int) ([]Bucket,error) {
 	}
 	`,min_doc_count)
 	request,_:=http.NewRequest("GET",url,strings.NewReader(body))
+	request.Header.Add("Content-Type","application/json")
 	response,e:=client.Do(request)
 	if e!=nil {
 		return nil,e
@@ -174,8 +191,11 @@ func SearchVersionStatus(min_doc_count int) ([]Bucket,error) {
 }
 
 func HasHash(hash string) (bool,error) {
+	client:=http.Client{}
 	url:=fmt.Sprintf("http://%s/metadata/_search?q=hash:%s&size=0",os.Getenv("ES_SERVER"),hash)
-	response,e:=http.Get(url)
+	request,_:=http.NewRequest("GET",url,nil)
+	request.Header.Add("Content-Type","application/json")
+	response,e:=client.Do(request)
 	if e!=nil{
 		return false,e
 	}
@@ -186,8 +206,11 @@ func HasHash(hash string) (bool,error) {
 }
 
 func SearchHashSize(hash string) (size int64, e error) {
+	client:=http.Client{}
 	url := fmt.Sprintf("http://%s/metadata/_search?q=hash:%s&size=1",os.Getenv("ES_SERVER"), hash)
-	response, e := http.Get(url)
+	request,_:=http.NewRequest("GET",url,nil)
+	request.Header.Add("Content-Type","application/json")
+	response,e:=client.Do(request)
 	if e != nil {
 		return
 	}

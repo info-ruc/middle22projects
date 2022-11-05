@@ -14,13 +14,13 @@ import (
 )
 
 func put(w http.ResponseWriter,r *http.Request){
-	hash:=utils.GetHashFromHeader(r.Header)
+	hash:=utils.GetHashFromHeader(r.Header)//get hash of the object
 	if hash==""{
 		log.Println("missing object hash digest header")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	c,e:=storeObject(r.Body,url.PathEscape(hash))
+	c,e:=storeObject(r.Body,url.PathEscape(hash))//save the object named by hash
 	if e != nil {
 		log.Println(e)
 		w.WriteHeader(c)
@@ -31,9 +31,9 @@ func put(w http.ResponseWriter,r *http.Request){
 		return
 	}
 
-	name:=string.Split(r.URL.EscapedPath(),"/")[2]
+	name:=strings.Split(r.URL.EscapedPath(),"/")[2]
 	size := utils.GetSizeFromHeader(r.Header)
-	e=es.AddVersion(name,hash,size)
+	e=es.AddVersion(name,hash,size)//add the meta data of this version
 	if e!=nil{
 		log.Fatal(e)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -41,12 +41,12 @@ func put(w http.ResponseWriter,r *http.Request){
 }
 
 func storeObject(r io.Reader,object string) (int,error){
-	stream,e:=putStream(object)
+	stream,e:=putStream(object)//create putstream which is the file stream of object for write
 	if e!=nil{
 		return http.StatusServiceUnavailable,e
 	}
-	io.Copy(stream,r)
-	e.stream.Close()
+	io.Copy(stream,r)//write the r from request to file stream which means save
+	e=stream.Close()
 	if e!=nil{
 		return http.StatusInternalServerError,e
 	}
@@ -54,7 +54,7 @@ func storeObject(r io.Reader,object string) (int,error){
 }
 
 func putStream(object string) (*objectstream.PutStream,error){
-	server:=heartbeat.ChooseRandomDataServer()
+	server:=heartbeat.ChooseRandomDataServer()//choose one data server
 	if server==""{
 		return nil,fmt.Errorf("cannot find any dataServer")
 	}

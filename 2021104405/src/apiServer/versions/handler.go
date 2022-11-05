@@ -17,8 +17,10 @@ func Handler(w http.ResponseWriter,r *http.Request){
 	from:=0
 	size:=1000
 	name:=strings.Split(r.URL.EscapedPath(),"/")[2]
+	log.Println(name)
+	//page from from with size of size
 	for {
-		metas,e:=es.SearchAllVersions(name,from,size)
+		metas,e:=es.SearchAllVersions(name,from,size)//metas:objects array of all versions
 		if e!=nil{
 			log.Println(e)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -27,11 +29,11 @@ func Handler(w http.ResponseWriter,r *http.Request){
 		for i := range metas {
 			b, _ := json.Marshal(metas[i])
 			w.Write(b)
-			w.Write([]byte("\n"))
+			w.Write([]byte("\n"))//response
 		}
 		if len(metas) != size {
-			return
+			return//no more data
 		}
-		from += size
+		from += size//0-1000,1000-(1000+size)
 	}
 }

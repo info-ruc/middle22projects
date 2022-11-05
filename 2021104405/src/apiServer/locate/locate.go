@@ -8,9 +8,13 @@ import (
 )
 
 func Locate(name string) string{
-	q:=rabbitmq.New("RABBITMQ_SERVER")//temp mq
-	q.Publish("dataServers",name)//send message to data server
-	c:=q.Consume()
+	q:=rabbitmq.New(os.Getenv("RABBITMQ_SERVER"))//temp mq,just for locate
+	q.Publish("dataServers",name)//send the name of target object to data server,then all the queue bind dataServers will receive this
+	c:=q.Consume()//channel
+	go func(){
+		time.Sleep(time.Second)
+		q.Close()//wait for one second then close the rabbitmq
+	}()
 	msg:=<-c
 	s,_:=strconv.Unquote(string(msg.Body))
 	return s

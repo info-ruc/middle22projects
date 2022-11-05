@@ -1,6 +1,11 @@
 package objects
 
-import "net/http"
+import (
+	"net/http"
+	"strings"
+	"../../lib/es"
+	"log"
+)
 
 func Handler(w http.ResponseWriter,r *http.Request){
 	m:=r.Method
@@ -19,13 +24,13 @@ func Handler(w http.ResponseWriter,r *http.Request){
 
 func del(w http.ResponseWriter,r *http.Request){
 	name:=strings.Split(r.URL.EscapedPath(),"/")[2]
-	version,e:=es.SearchLatestVersion(name)
+	version,e:=es.SearchLatestVersion(name)//get the lastest version
 	if e!=nil{
 		log.Println(e)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	e=es.PutMetaData(name,version.Version+1,0,"")//hash is empty means it's a delete flag
+	e=es.PutMetaData(name,version.Version+1,0,"")//size is 0 and hash is empty which means it's a delete flag
 	if e!=nil{
 		log.Println(e)
 		w.WriteHeader(http.StatusInternalServerError)

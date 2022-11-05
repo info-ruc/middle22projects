@@ -1,10 +1,16 @@
 package objects
 
 import(
+	"net/http"
+	"net/url"
 	"../locate"
 	"fmt"
 	"io"
 	"../../lib/objectstream"
+	"strconv"
+	"log"
+	"../../lib/es"
+	"strings"
 )
 
 func get(w http.ResponseWriter,r *http.Request){
@@ -20,7 +26,7 @@ func get(w http.ResponseWriter,r *http.Request){
 			return
 		}
 	}
-	meta,e:=es.GetMetaData(name,version)
+	meta,e:=es.GetMetaData(name,version)//get meta data by name and version
 	if e!=nil{
 		log.Println(e)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -30,19 +36,19 @@ func get(w http.ResponseWriter,r *http.Request){
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	object:=url.PathEscape(meta.Hash)
-	stream,e:=getStream(object)
+	object:=url.PathEscape(meta.Hash)//hash as the name of target object which can be searched
+	stream,e:=getStream(object)//fiel stream for read
 	if e!=nil{
 		log.Println(e)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	io.Copy(w,stream)
+	io.Copy(w,stream)//copy to the response
 }
 
 func getStream(object string)(io.Reader,error){
-	server:=locate.Locate(object)
-	if server!==""{
+	server:=locate.Locate(object)//locate the address of server which store the object
+	if server!="" {
 		return nil,fmt.Errorf("object %s locate fail",object)
 	}
 	return objectstream.NewGetStream(server,object)
